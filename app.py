@@ -16,10 +16,10 @@ st.set_page_config(
     page_icon="🛠️"
 )
 
-# --- ฟังก์ชันแปลงรูปภาพเป็น Base64 (เพื่อให้แสดงผลใน HTML ได้ชัวร์ๆ) ---
+# --- ฟังก์ชันแปลงรูปภาพเป็น Base64 ---
 def get_img_as_base64(file_path):
     if not os.path.exists(file_path):
-        return "" # ถ้าไม่เจอไฟล์ ส่งค่าว่างกลับไป
+        return ""
     with open(file_path, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
@@ -28,24 +28,21 @@ def get_img_as_base64(file_path):
 logo_path = "static/logo_dsd.png"
 img_base64 = get_img_as_base64(logo_path)
 
-# สร้าง src สำหรับใส่ใน HTML tag
 if img_base64:
     logo_src = f"data:image/png;base64,{img_base64}"
 else:
-    # กรณีหาไฟล์ไม่เจอ ให้ใช้รูป placeholder แทน หรือปล่อยว่าง
     logo_src = "https://via.placeholder.com/150?text=Logo+Missing"
 
-# --- CSS ตกแต่ง (ธีมม่วง-เหลือง) ---
+# --- CSS ตกแต่ง (Responsive & Theme) ---
 st.markdown("""
 <style>
-    /* Google Fonts: Sarabun */
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
     
     html, body, [class*="css"] {
         font-family: 'Sarabun', sans-serif;
     }
 
-    /* --- Header Style (ม่วง) --- */
+    /* --- Header Style (Desktop) --- */
     .header-container {
         background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
         padding: 25px;
@@ -65,43 +62,38 @@ st.markdown("""
         background-color: white;
         border-radius: 50%;
         padding: 5px;
-        border: 3px solid #FFC107; /* ขอบเหลือง */
-        flex-shrink: 0; /* ป้องกันโลโก้บีบตัว */
+        border: 3px solid #FFC107;
+        flex-shrink: 0;
     }
 
-    .header-text {
-        text-align: left;
-    }
-    .header-main {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin: 0;
-        color: #FFF;
-    }
-    .header-sub {
-        font-size: 1.1rem;
-        font-weight: 400;
-        margin-bottom: 5px;
-        color: #FFD54F; /* เหลืองอ่อน */
-    }
-    .header-line {
-        border-bottom: 3px solid #FFC107; /* เส้นเหลืองเข้ม */
-        width: 80px;
-        margin: 10px 0;
-    }
+    .header-text { text-align: left; width: 100%; }
+    .header-main { font-size: 1.8rem; font-weight: bold; margin: 0; color: #FFF; line-height: 1.2; }
+    .header-sub { font-size: 1.1rem; font-weight: 400; margin-bottom: 5px; color: #FFD54F; }
+    .header-line { border-bottom: 3px solid #FFC107; width: 80px; margin: 10px 0; }
+    .header-desc { font-size: 1rem; opacity: 0.9; }
 
-    /* --- Footer Style --- */
-    .footer-container {
-        margin-top: 50px;
-        padding-top: 20px;
-        border-top: 2px solid #eee;
-        text-align: center;
-        color: #666;
-        font-size: 0.85rem;
-    }
-    .footer-credit {
-        font-weight: bold;
-        color: #4a148c;
+    /* --- 📱 Mobile Optimization (Media Query) --- */
+    /* ถ้าหน้าจอกว้างน้อยกว่า 768px (มือถือ/แท็บเล็ตแนวตั้ง) ให้ใช้สไตล์นี้ */
+    @media only screen and (max-width: 768px) {
+        .header-container {
+            flex-direction: column; /* เรียงแนวตั้ง */
+            text-align: center;     /* จัดกลาง */
+            padding: 15px;
+            gap: 10px;
+        }
+        .header-text { text-align: center; }
+        .header-line { margin: 10px auto; /* เส้นอยู่ตรงกลาง */ }
+        
+        .logo-img {
+            width: 70px;  /* ลดขนาดโลโก้ */
+            height: 70px;
+        }
+        .header-main { font-size: 1.4rem; } /* ลดขนาดตัวหนังสือ */
+        .header-sub { font-size: 0.9rem; }
+        .header-desc { font-size: 0.8rem; }
+        
+        /* ปรับปุ่มตัวอย่างให้เรียงสวยขึ้นบนมือถือ */
+        div[data-testid="column"] { width: 100% !important; flex: 1 1 auto !important; min-width: 0px !important; }
     }
 
     /* --- BMC Grid Layout --- */
@@ -112,6 +104,14 @@ st.markdown("""
         gap: 12px;
         margin-top: 20px;
     }
+    /* บนมือถือ ให้ตารางเรียงลงมาเป็นชั้นๆ (1 คอลัมน์) */
+    @media only screen and (max-width: 768px) {
+        .bmc-grid {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
     .box {
         background-color: #ffffff;
         border: 1px solid #e0e0e0;
@@ -119,22 +119,11 @@ st.markdown("""
         padding: 15px;
         color: #333;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-    }
-    .box:hover {
-        box-shadow: 0 5px 15px rgba(74, 20, 140, 0.1);
     }
     .box h4 { margin-top: 0; color: #4a148c; font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
+    .box p { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: #555; margin: 0; }
     
-    .box p { 
-        font-size: 0.9rem; 
-        line-height: 1.8; 
-        white-space: pre-wrap; 
-        color: #555; 
-        margin: 0;
-    }
-    
-    /* Mapping ตำแหน่ง */
+    /* Mapping & Colors */
     .kp { grid-area: 1 / 1 / 3 / 2; background-color: #f3e5f5; }
     .ka { grid-area: 1 / 2 / 2 / 3; }
     .kr { grid-area: 2 / 2 / 3 / 3; }
@@ -142,11 +131,10 @@ st.markdown("""
     .cr { grid-area: 1 / 4 / 2 / 5; }
     .ch { grid-area: 2 / 4 / 3 / 5; }
     .cs { grid-area: 1 / 5 / 3 / 6; background-color: #f3e5f5; }
-    
     .co { grid-area: 3 / 1 / 4 / 3; background-color: #fff5f5; border: 1px dashed #dc3545; } 
     .rs { grid-area: 3 / 3 / 4 / 6; background-color: #f0fff4; border: 1px dashed #28a745; }
 
-    /* ปุ่ม */
+    /* Button Style */
     .stButton button { 
         width: 100%; border-radius: 10px; font-size: 0.85rem; height: auto; padding: 0.5rem 0.2rem;
         border: 1px solid #7b1fa2; color: #4a148c; background-color: #f3e5f5;
@@ -158,8 +146,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- ส่วน Header (ใช้ src ที่เป็น Base64) ---
-# ตรงนี้ใช้ตัวแปร logo_src ที่เราเตรียมไว้ข้างบน
+# --- Header ---
 st.markdown(f"""
 <div class="header-container">
     <img src="{logo_src}" class="logo-img" alt="DSD Logo">
@@ -167,12 +154,12 @@ st.markdown(f"""
         <div class="header-sub">กรมพัฒนาฝีมือแรงงาน</div>
         <div class="header-main">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</div>
         <div class="header-line"></div>
-        <div style="font-size: 1rem; opacity: 0.9;">ระบบสร้างโมเดลธุรกิจอัตโนมัติ (AI Business Model Canvas)</div>
+        <div class="header-desc">ระบบสร้างโมเดลธุรกิจอัตโนมัติ (AI Business Model Canvas)</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# 2. ฟังก์ชันเรียก AI
+# 2. ฟังก์ชันเรียก AI (แก้บั๊ก JSON ด้วย JSON Mode)
 def generate_bmc(business, product, customer, strength):
     if not api_key:
         st.error("ไม่พบ API Key กรุณาตั้งค่าในไฟล์ .env")
@@ -190,14 +177,10 @@ def generate_bmc(business, product, customer, strength):
     - ลูกค้า: "{customer}"
     - จุดเด่น: "{strength}"
 
-    **คำสั่งสำคัญ (Strict Requirements):**
-    1. **Format:** ตอบเป็น JSON เท่านั้น (key เป็นภาษาอังกฤษตัวพิมพ์เล็ก)
-    2. **Style:** ใช้ Bullet point (-) ข้อความสั้น กระชับ **ห้ามเขียนบรรยายยาว**
-    3. **Financials (เน้นสั้นและมีตัวเลข):** - **ห้าม** แยกหัวข้อเป็น Fixed Cost / Variable Cost ให้รวมมาเลย
-       - **Cost Structure:** ขอ 3-5 รายการสั้นๆ รูปแบบ: "- รายการ: ราคา" 
-         (เช่น "- ค่าเช่าที่: 5,000 บ./เดือน", "- ค่าจ้าง: 400 บ./วัน")
-       - **Revenue Streams:** ขอ 3-5 รายการสั้นๆ รูปแบบ: "- สินค้า: ราคาขาย (กำไร)"
-         (เช่น "- ล้างแอร์: 500 บ./เครื่อง (กำไร 300)", "- ขายอะไหล่: กำไร 20%")
+    **คำสั่งสำคัญ:**
+    1. ตอบเป็น JSON Object เท่านั้น (ไม่ต้องมี Markdown ```json)
+    2. ใช้ Bullet point (-) สำหรับข้อย่อย
+    3. ช่อง Cost Structure และ Revenue Streams ให้รวมรายการมาเลย ไม่ต้องแยก Fixed/Variable ให้ระบุตัวเลขราคา/บาท ให้ชัดเจน
 
     Output Keys:
     key_partners, key_activities, key_resources, value_propositions, customer_relationships, 
@@ -205,11 +188,19 @@ def generate_bmc(business, product, customer, strength):
     """
     
     try:
-        response = model.generate_content(prompt)
-        text_response = response.text.replace("```json", "").replace("```", "").strip()
+        # --- FIX 2: บังคับ Output เป็น JSON Mode (ลดโอกาส Error ได้ 99%) ---
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        # ไม่ต้อง replace ```json แล้ว เพราะใช้ JSON Mode
+        text_response = response.text.strip()
         data = json.loads(text_response)
         
-        # Data Flattening
+        # Data Flattening (แปลงข้อมูลให้เป็นข้อความสวยๆ)
         cleaned_data = {}
         for key, value in data.items():
             if isinstance(value, dict):
@@ -230,103 +221,77 @@ def generate_bmc(business, product, customer, strength):
         return cleaned_data
 
     except Exception as e:
-        st.error(f"เกิดข้อผิดพลาด: {e}")
+        st.error(f"เกิดข้อผิดพลาดในการประมวลผล: {e}")
         return {}
 
-# --- ส่วนจัดการตัวอย่างข้อมูล (Session State) ---
+# --- Session State ---
 if 'form_data' not in st.session_state:
-    st.session_state['form_data'] = {
-        'name': '', 'product': '', 'customer': '', 'usp': ''
-    }
+    st.session_state['form_data'] = {'name': '', 'product': '', 'customer': '', 'usp': ''}
 
 def set_example(name, product, customer, usp):
-    st.session_state['form_data'] = {
-        'name': name, 'product': product, 'customer': customer, 'usp': usp
-    }
+    st.session_state['form_data'] = {'name': name, 'product': product, 'customer': customer, 'usp': usp}
 
-# UI ส่วนกลาง
-st.markdown("##### 💡 เลือกตัวอย่างธุรกิจ (สำหรับทดสอบ):")
+# UI เลือกตัวอย่าง
+st.markdown("##### 💡 เลือกตัวอย่างธุรกิจ:")
 c1, c2, c3, c4, c5 = st.columns(5)
-
 with c1:
-    if st.button("🔌 ช่างแอร์/ไฟฟ้า"):
-        set_example("ร้านช่างแอร์และไฟฟ้าบริการ", 
-                    "บริการล้างแอร์ ซ่อมแอร์ ติดตั้งระบบไฟ", 
-                    "เจ้าของบ้านในหมู่บ้านจัดสรร, หอพัก", 
-                    "ช่างมาไว ไม่ทิ้งงาน รับประกันงานซ่อม 30 วัน")
+    if st.button("🔌 ช่างแอร์/ไฟฟ้า"): set_example("ร้านช่างแอร์และไฟฟ้าบริการ", "บริการล้างแอร์ ซ่อมแอร์ ติดตั้งระบบไฟ", "เจ้าของบ้านในหมู่บ้านจัดสรร", "ช่างมาไว รับประกันงานซ่อม 30 วัน")
 with c2:
-    if st.button("🔨 ช่างรับเหมา"):
-        set_example("ช่างสมชาย รับเหมาต่อเติม", 
-                    "ต่อเติมครัว โรงจอดรถ ปูกระเบื้อง", 
-                    "คนในชุมชนระแวกใกล้เคียง 10 กม.", 
-                    "เป็นคนในพื้นที่ ไว้ใจได้")
+    if st.button("🔨 ช่างรับเหมา"): set_example("ช่างสมชาย รับเหมาต่อเติม", "ต่อเติมครัว โรงจอดรถ ปูกระเบื้อง", "คนในชุมชนระแวกใกล้เคียง", "คนพื้นที่ ไว้ใจได้")
 with c3:
-    if st.button("🏍️ ซ่อมมอเตอร์ไซค์"):
-        set_example("อู่ช่างบอย มอไซค์ซิ่ง", 
-                    "ซ่อมมอเตอร์ไซค์ ถ่ายน้ำมันเครื่อง ปะยาง", 
-                    "วินมอเตอร์ไซค์, นักเรียน, คนทำงาน", 
-                    "เปิดเช้าปิดดึก มีรถกระบะไปรับรถเสียถึงที่")
+    if st.button("🏍️ ซ่อมมอไซค์"): set_example("อู่ช่างบอย มอไซค์ซิ่ง", "ซ่อมมอเตอร์ไซค์ ถ่ายน้ำมันเครื่อง ปะยาง", "วินมอเตอร์ไซค์, นักเรียน", "เปิดเช้าปิดดึก มีรถรับส่ง")
 with c4:
-    if st.button("🥬 ฟาร์มผักไฮโดร"):
-        set_example("กรีนฟาร์ม ไฮโดรโปนิกส์", 
-                    "ผักสลัดปลอดสารพิษ", 
-                    "คนรักสุขภาพ, ร้านสเต็ก", 
-                    "ผักสดตัดใหม่ทุกเช้า ไม่ใช้ยาฆ่าแมลง")
+    if st.button("🥬 ผักไฮโดรฯ"): set_example("กรีนฟาร์ม ไฮโดรโปนิกส์", "ผักสลัดปลอดสารพิษ", "คนรักสุขภาพ, ร้านสเต็ก", "ตัดใหม่ทุกเช้า ไม่ใช้ยาฆ่าแมลง")
 with c5:
-    if st.button("☕ ร้านกาแฟ"):
-        set_example("กาแฟบ้านทุ่ง", 
-                    "กาแฟสด เมนูน้ำชง โกโก้ ชาเขียว", 
-                    "คนในชุมชน, ขาจรขับรถผ่าน", 
-                    "ราคาเข้าถึงง่าย (25-40 บาท)")
+    if st.button("☕ ร้านกาแฟ"): set_example("กาแฟบ้านทุ่ง", "กาแฟสด เมนูน้ำชง", "คนในชุมชน, ขาจร", "ราคาเข้าถึงง่าย (25-40 บาท)")
 
 st.divider()
 
-# ฟอร์มรับข้อมูล
+# Form
 with st.form("input_form"):
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**1. ชื่อธุรกิจ / ประเภท**")
-        business_name = st.text_input("ชื่อธุรกิจ", value=st.session_state['form_data']['name'], label_visibility="collapsed", placeholder="ระบุชื่อร้าน หรือประเภทงาน")
-        
+        business_name = st.text_input("ชื่อธุรกิจ", value=st.session_state['form_data']['name'], label_visibility="collapsed")
         st.markdown("**3. ลูกค้าของคุณคือใคร**")
-        customer_target = st.text_input("ลูกค้า", value=st.session_state['form_data']['customer'], label_visibility="collapsed", placeholder="ระบุกลุ่มเป้าหมายหลัก")
+        customer_target = st.text_input("ลูกค้า", value=st.session_state['form_data']['customer'], label_visibility="collapsed")
     with col2:
         st.markdown("**2. สินค้าหรือบริการคืออะไร**")
-        product_detail = st.text_area("สินค้า", value=st.session_state['form_data']['product'], label_visibility="collapsed", placeholder="อธิบายรายละเอียดสิ่งที่ขาย", height=104)
-        
+        product_detail = st.text_area("สินค้า", value=st.session_state['form_data']['product'], label_visibility="collapsed", height=104)
         st.markdown("**4. จุดเด่น / สิ่งที่ลูกค้าชอบ**")
-        usp = st.text_input("จุดเด่น", value=st.session_state['form_data']['usp'], label_visibility="collapsed", placeholder="ทำไมลูกค้าถึงเลือกเรา")
+        usp = st.text_input("จุดเด่น", value=st.session_state['form_data']['usp'], label_visibility="collapsed")
     
     submitted = st.form_submit_button("🚀 สร้างแผนธุรกิจ (BMC)", type="primary")
 
-# แสดงผล
+# Result
 if submitted:
     if not business_name:
         st.warning("⚠️ กรุณากรอกชื่อธุรกิจก่อนครับ")
     else:
-        with st.spinner("⏳ AI กำลังวิเคราะห์ข้อมูลธุรกิจ..."):
+        with st.spinner("⏳ AI กำลังวิเคราะห์ข้อมูล และสร้าง BMC รอซักครู่ครับ..."):
             data = generate_bmc(business_name, product_detail, customer_target, usp)
             
             if data:
+                # บนมือถือ CSS จะปรับให้ grid-template-columns เป็นแบบ column เดียว (Stack)
                 html_code = f"""
                 <div class="bmc-grid">
-                    <div class="box kp"><h4>🤝 Key Partners (พันธมิตร)</h4><p>{data.get('key_partners', '-')}</p></div>
-                    <div class="box ka"><h4>⚙️ Key Activities (กิจกรรมหลัก)</h4><p>{data.get('key_activities', '-')}</p></div>
-                    <div class="box kr"><h4>🧱 Key Resources (ทรัพยากร)</h4><p>{data.get('key_resources', '-')}</p></div>
-                    <div class="box vp"><h4>🎁 Value Propositions (จุดเด่น)</h4><p>{data.get('value_propositions', '-')}</p></div>
-                    <div class="box cr"><h4>❤️ Customer Relationships (สายสัมพันธ์)</h4><p>{data.get('customer_relationships', '-')}</p></div>
-                    <div class="box ch"><h4>🚚 Channels (ช่องทาง)</h4><p>{data.get('channels', '-')}</p></div>
-                    <div class="box cs"><h4>👥 Customer Segments (ลูกค้า)</h4><p>{data.get('customer_segments', '-')}</p></div>
-                    <div class="box co"><h4>💰 Cost Structure (ต้นทุน)</h4><p>{data.get('cost_structure', '-')}</p></div>
-                    <div class="box rs"><h4>💵 Revenue Streams (รายได้)</h4><p>{data.get('revenue_streams', '-')}</p></div>
+                    <div class="box kp"><h4>🤝 Key Partners</h4><p>{data.get('key_partners', '-')}</p></div>
+                    <div class="box ka"><h4>⚙️ Key Activities</h4><p>{data.get('key_activities', '-')}</p></div>
+                    <div class="box kr"><h4>🧱 Key Resources</h4><p>{data.get('key_resources', '-')}</p></div>
+                    <div class="box vp"><h4>🎁 Value Propositions</h4><p>{data.get('value_propositions', '-')}</p></div>
+                    <div class="box cr"><h4>❤️ Customer Relationships</h4><p>{data.get('customer_relationships', '-')}</p></div>
+                    <div class="box ch"><h4>🚚 Channels</h4><p>{data.get('channels', '-')}</p></div>
+                    <div class="box cs"><h4>👥 Customer Segments</h4><p>{data.get('customer_segments', '-')}</p></div>
+                    <div class="box co"><h4>💰 Cost Structure</h4><p>{data.get('cost_structure', '-')}</p></div>
+                    <div class="box rs"><h4>💵 Revenue Streams</h4><p>{data.get('revenue_streams', '-')}</p></div>
                 </div>
                 """
                 st.markdown(html_code, unsafe_allow_html=True)
 
-# --- Footer (ส่วนท้าย) ---
+# Footer
 st.markdown("""
 <div class="footer-container">
     <p>© 2025 พัฒนาโดย: <span class="footer-credit">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</span> | กรมพัฒนาฝีมือแรงงาน</p>
-    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI ในการวิเคราะห์เบื้องต้น ผู้ประกอบการควรพิจารณาความเหมาะสมกับสถานการณ์จริง</p>
+    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น</p>
 </div>
 """, unsafe_allow_html=True)
