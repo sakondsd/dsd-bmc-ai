@@ -73,26 +73,21 @@ st.markdown("""
     .header-desc { font-size: 1rem; opacity: 0.9; }
 
     /* --- 📱 Mobile Optimization (Media Query) --- */
-    /* ถ้าหน้าจอกว้างน้อยกว่า 768px (มือถือ/แท็บเล็ตแนวตั้ง) ให้ใช้สไตล์นี้ */
     @media only screen and (max-width: 768px) {
         .header-container {
-            flex-direction: column; /* เรียงแนวตั้ง */
-            text-align: center;     /* จัดกลาง */
+            flex-direction: column;
+            text-align: center;
             padding: 15px;
             gap: 10px;
         }
         .header-text { text-align: center; }
-        .header-line { margin: 10px auto; /* เส้นอยู่ตรงกลาง */ }
+        .header-line { margin: 10px auto; }
         
-        .logo-img {
-            width: 70px;  /* ลดขนาดโลโก้ */
-            height: 70px;
-        }
-        .header-main { font-size: 1.4rem; } /* ลดขนาดตัวหนังสือ */
+        .logo-img { width: 70px; height: 70px; }
+        .header-main { font-size: 1.4rem; }
         .header-sub { font-size: 0.9rem; }
         .header-desc { font-size: 0.8rem; }
         
-        /* ปรับปุ่มตัวอย่างให้เรียงสวยขึ้นบนมือถือ */
         div[data-testid="column"] { width: 100% !important; flex: 1 1 auto !important; min-width: 0px !important; }
     }
 
@@ -104,12 +99,8 @@ st.markdown("""
         gap: 12px;
         margin-top: 20px;
     }
-    /* บนมือถือ ให้ตารางเรียงลงมาเป็นชั้นๆ (1 คอลัมน์) */
     @media only screen and (max-width: 768px) {
-        .bmc-grid {
-            display: flex;
-            flex-direction: column;
-        }
+        .bmc-grid { display: flex; flex-direction: column; }
     }
 
     .box {
@@ -120,7 +111,7 @@ st.markdown("""
         color: #333;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .box h4 { margin-top: 0; color: #4a148c; font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
+    .box h4 { margin-top: 0; color: #4a148c; font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; }
     .box p { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: #555; margin: 0; }
     
     /* Mapping & Colors */
@@ -159,7 +150,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 2. ฟังก์ชันเรียก AI (แก้บั๊ก JSON ด้วย JSON Mode)
+# 2. ฟังก์ชันเรียก AI (ใช้ JSON Mode)
 def generate_bmc(business, product, customer, strength):
     if not api_key:
         st.error("ไม่พบ API Key กรุณาตั้งค่าในไฟล์ .env")
@@ -188,7 +179,6 @@ def generate_bmc(business, product, customer, strength):
     """
     
     try:
-        # --- FIX 2: บังคับ Output เป็น JSON Mode (ลดโอกาส Error ได้ 99%) ---
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
@@ -196,11 +186,10 @@ def generate_bmc(business, product, customer, strength):
             )
         )
         
-        # ไม่ต้อง replace ```json แล้ว เพราะใช้ JSON Mode
         text_response = response.text.strip()
         data = json.loads(text_response)
         
-        # Data Flattening (แปลงข้อมูลให้เป็นข้อความสวยๆ)
+        # Data Flattening
         cleaned_data = {}
         for key, value in data.items():
             if isinstance(value, dict):
@@ -268,22 +257,22 @@ if submitted:
     if not business_name:
         st.warning("⚠️ กรุณากรอกชื่อธุรกิจก่อนครับ")
     else:
-        with st.spinner("⏳ AI กำลังวิเคราะห์ข้อมูล และสร้าง BMC รอซักครู่ครับ..."):
+        with st.spinner("⏳ AI กำลังวิเคราะห์ข้อมูล..."):
             data = generate_bmc(business_name, product_detail, customer_target, usp)
             
             if data:
-                # บนมือถือ CSS จะปรับให้ grid-template-columns เป็นแบบ column เดียว (Stack)
+                # แสดงผลตาราง 9 ช่อง พร้อมหัวข้อภาษาไทย
                 html_code = f"""
                 <div class="bmc-grid">
-                    <div class="box kp"><h4>🤝 Key Partners</h4><p>{data.get('key_partners', '-')}</p></div>
-                    <div class="box ka"><h4>⚙️ Key Activities</h4><p>{data.get('key_activities', '-')}</p></div>
-                    <div class="box kr"><h4>🧱 Key Resources</h4><p>{data.get('key_resources', '-')}</p></div>
-                    <div class="box vp"><h4>🎁 Value Propositions</h4><p>{data.get('value_propositions', '-')}</p></div>
-                    <div class="box cr"><h4>❤️ Customer Relationships</h4><p>{data.get('customer_relationships', '-')}</p></div>
-                    <div class="box ch"><h4>🚚 Channels</h4><p>{data.get('channels', '-')}</p></div>
-                    <div class="box cs"><h4>👥 Customer Segments</h4><p>{data.get('customer_segments', '-')}</p></div>
-                    <div class="box co"><h4>💰 Cost Structure</h4><p>{data.get('cost_structure', '-')}</p></div>
-                    <div class="box rs"><h4>💵 Revenue Streams</h4><p>{data.get('revenue_streams', '-')}</p></div>
+                    <div class="box kp"><h4>🤝 พันธมิตรหลัก (Key Partners)</h4><p>{data.get('key_partners', '-')}</p></div>
+                    <div class="box ka"><h4>⚙️ กิจกรรมหลัก (Key Activities)</h4><p>{data.get('key_activities', '-')}</p></div>
+                    <div class="box kr"><h4>🧱 ทรัพยากรหลัก (Key Resources)</h4><p>{data.get('key_resources', '-')}</p></div>
+                    <div class="box vp"><h4>🎁 คุณค่าหลัก (Value Propositions)</h4><p>{data.get('value_propositions', '-')}</p></div>
+                    <div class="box cr"><h4>❤️ ความสัมพันธ์ลูกค้า (Relationships)</h4><p>{data.get('customer_relationships', '-')}</p></div>
+                    <div class="box ch"><h4>🚚 ช่องทางเข้าถึง (Channels)</h4><p>{data.get('channels', '-')}</p></div>
+                    <div class="box cs"><h4>👥 กลุ่มลูกค้า (Customer Segments)</h4><p>{data.get('customer_segments', '-')}</p></div>
+                    <div class="box co"><h4>💰 โครงสร้างต้นทุน (Cost Structure)</h4><p>{data.get('cost_structure', '-')}</p></div>
+                    <div class="box rs"><h4>💵 กระแสรายได้ (Revenue Streams)</h4><p>{data.get('revenue_streams', '-')}</p></div>
                 </div>
                 """
                 st.markdown(html_code, unsafe_allow_html=True)
@@ -292,6 +281,6 @@ if submitted:
 st.markdown("""
 <div class="footer-container">
     <p>© 2025 พัฒนาโดย: <span class="footer-credit">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</span> | กรมพัฒนาฝีมือแรงงาน</p>
-    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น</p>
+    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น ผู้ประกอบการควรพิจารณาความเหมาะสมกับสถานการณ์จริง</p>
 </div>
 """, unsafe_allow_html=True)
