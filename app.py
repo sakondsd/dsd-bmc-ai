@@ -83,7 +83,10 @@ st.markdown("""
         .header-text { text-align: center; }
         .header-line { margin: 10px auto; }
         
-        .logo-img { width: 70px; height: 70px; }
+        .logo-img {
+            width: 70px;
+            height: 70px;
+        }
         .header-main { font-size: 1.4rem; }
         .header-sub { font-size: 0.9rem; }
         .header-desc { font-size: 0.8rem; }
@@ -100,7 +103,10 @@ st.markdown("""
         margin-top: 20px;
     }
     @media only screen and (max-width: 768px) {
-        .bmc-grid { display: flex; flex-direction: column; }
+        .bmc-grid {
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .box {
@@ -111,7 +117,7 @@ st.markdown("""
         color: #333;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .box h4 { margin-top: 0; color: #4a148c; font-size: 0.95rem; font-weight: bold; margin-bottom: 10px; }
+    .box h4 { margin-top: 0; color: #4a148c; font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
     .box p { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: #555; margin: 0; }
     
     /* Mapping & Colors */
@@ -125,13 +131,22 @@ st.markdown("""
     .co { grid-area: 3 / 1 / 4 / 3; background-color: #fff5f5; border: 1px dashed #dc3545; } 
     .rs { grid-area: 3 / 3 / 4 / 6; background-color: #f0fff4; border: 1px dashed #28a745; }
 
-    /* Button Style */
+    /* Button Style - ปุ่มปกติ (ยังไม่เลือก) */
     .stButton button { 
         width: 100%; border-radius: 10px; font-size: 0.85rem; height: auto; padding: 0.5rem 0.2rem;
-        border: 1px solid #7b1fa2; color: #4a148c; background-color: #f3e5f5;
+        border: 2px solid #7b1fa2; /* ขอบหนาขึ้นนิดนึง */
+        color: #4a148c; 
+        background-color: #ffffff; /* พื้นขาว */
+        font-weight: 600; /* ตัวหนา */
     }
-    .stButton button:hover { background-color: #e1bee7; border-color: #4a148c; }
-    button[kind="primary"] { background-color: #4a148c !important; border: none !important; color: white !important; }
+    .stButton button:hover { background-color: #f3e5f5; }
+    
+    /* Button Style - ปุ่ม Primary (ที่ถูกเลือก) */
+    button[kind="primary"] { 
+        background-color: #4a148c !important; /* สีม่วงเข้มทึบ */
+        border: 2px solid #4a148c !important; 
+        color: white !important; /* ตัวหนังสือขาว */
+    }
     button[kind="primary"]:hover { background-color: #7b1fa2 !important; }
 
 </style>
@@ -150,14 +165,14 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 2. ฟังก์ชันเรียก AI (ใช้ JSON Mode)
+# 2. ฟังก์ชันเรียก AI
 def generate_bmc(business, product, customer, strength):
     if not api_key:
         st.error("ไม่พบ API Key กรุณาตั้งค่าในไฟล์ .env")
         return None
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
     prompt = f"""
     บทบาท: คุณคือที่ปรึกษาธุรกิจและนักบัญชีมืออาชีพ
@@ -189,7 +204,6 @@ def generate_bmc(business, product, customer, strength):
         text_response = response.text.strip()
         data = json.loads(text_response)
         
-        # Data Flattening
         cleaned_data = {}
         for key, value in data.items():
             if isinstance(value, dict):
@@ -220,19 +234,41 @@ if 'form_data' not in st.session_state:
 def set_example(name, product, customer, usp):
     st.session_state['form_data'] = {'name': name, 'product': product, 'customer': customer, 'usp': usp}
 
+# --- ฟังก์ชันเช็คว่าปุ่มไหนถูกเลือก ---
+def get_btn_type(example_name_to_check):
+    # ถ้าชื่อธุรกิจใน session state ตรงกับชื่อของปุ่มนี้ ให้คืนค่า 'primary' (สีทึบ)
+    if st.session_state['form_data']['name'] == example_name_to_check:
+        return "primary"
+    # ถ้าไม่ตรง ให้คืนค่า 'secondary' (สีโปร่ง)
+    return "secondary"
+
 # UI เลือกตัวอย่าง
 st.markdown("##### 💡 เลือกตัวอย่างธุรกิจ:")
 c1, c2, c3, c4, c5 = st.columns(5)
+
+# ชื่อตัวอย่างสำหรับเช็ค (ต้องตรงกับที่ส่งให้ set_example)
+ex1_name = "ร้านช่างแอร์และไฟฟ้าบริการ"
+ex2_name = "ช่างสมชาย รับเหมาต่อเติม"
+ex3_name = "อู่ช่างบอย มอไซค์ซิ่ง"
+ex4_name = "กรีนฟาร์ม ไฮโดรโปนิกส์"
+ex5_name = "กาแฟบ้านทุ่ง"
+
 with c1:
-    if st.button("🔌 ช่างแอร์/ไฟฟ้า"): set_example("ร้านช่างแอร์และไฟฟ้าบริการ", "บริการล้างแอร์ ซ่อมแอร์ ติดตั้งระบบไฟ", "เจ้าของบ้านในหมู่บ้านจัดสรร", "ช่างมาไว รับประกันงานซ่อม 30 วัน")
+    # ใช้ฟังก์ชัน get_btn_type เช็คเพื่อกำหนดสีปุ่ม
+    if st.button("🔌 ช่างแอร์/ไฟฟ้า", type=get_btn_type(ex1_name)): 
+        set_example(ex1_name, "บริการล้างแอร์ ซ่อมแอร์ ติดตั้งระบบไฟ", "เจ้าของบ้านในหมู่บ้านจัดสรร", "ช่างมาไว รับประกันงานซ่อม 30 วัน")
 with c2:
-    if st.button("🔨 ช่างรับเหมา"): set_example("ช่างสมชาย รับเหมาต่อเติม", "ต่อเติมครัว โรงจอดรถ ปูกระเบื้อง", "คนในชุมชนระแวกใกล้เคียง", "คนพื้นที่ ไว้ใจได้")
+    if st.button("🔨 ช่างรับเหมา", type=get_btn_type(ex2_name)): 
+        set_example(ex2_name, "ต่อเติมครัว โรงจอดรถ ปูกระเบื้อง", "คนในชุมชนระแวกใกล้เคียง", "คนพื้นที่ ไว้ใจได้")
 with c3:
-    if st.button("🏍️ ซ่อมมอไซค์"): set_example("อู่ช่างบอย มอไซค์ซิ่ง", "ซ่อมมอเตอร์ไซค์ ถ่ายน้ำมันเครื่อง ปะยาง", "วินมอเตอร์ไซค์, นักเรียน", "เปิดเช้าปิดดึก มีรถรับส่ง")
+    if st.button("🏍️ ซ่อมมอไซค์", type=get_btn_type(ex3_name)): 
+        set_example(ex3_name, "ซ่อมมอเตอร์ไซค์ ถ่ายน้ำมันเครื่อง ปะยาง", "วินมอเตอร์ไซค์, นักเรียน", "เปิดเช้าปิดดึก มีรถรับส่ง")
 with c4:
-    if st.button("🥬 ผักไฮโดรฯ"): set_example("กรีนฟาร์ม ไฮโดรโปนิกส์", "ผักสลัดปลอดสารพิษ", "คนรักสุขภาพ, ร้านสเต็ก", "ตัดใหม่ทุกเช้า ไม่ใช้ยาฆ่าแมลง")
+    if st.button("🥬 ผักไฮโดรฯ", type=get_btn_type(ex4_name)): 
+        set_example(ex4_name, "ผักสลัดปลอดสารพิษ", "คนรักสุขภาพ, ร้านสเต็ก", "ตัดใหม่ทุกเช้า ไม่ใช้ยาฆ่าแมลง")
 with c5:
-    if st.button("☕ ร้านกาแฟ"): set_example("กาแฟบ้านทุ่ง", "กาแฟสด เมนูน้ำชง", "คนในชุมชน, ขาจร", "ราคาเข้าถึงง่าย (25-40 บาท)")
+    if st.button("☕ ร้านกาแฟ", type=get_btn_type(ex5_name)): 
+        set_example(ex5_name, "กาแฟสด เมนูน้ำชง", "คนในชุมชน, ขาจร", "ราคาเข้าถึงง่าย (25-40 บาท)")
 
 st.divider()
 
@@ -261,18 +297,17 @@ if submitted:
             data = generate_bmc(business_name, product_detail, customer_target, usp)
             
             if data:
-                # แสดงผลตาราง 9 ช่อง พร้อมหัวข้อภาษาไทย
                 html_code = f"""
                 <div class="bmc-grid">
-                    <div class="box kp"><h4>🤝 พันธมิตรหลัก (Key Partners)</h4><p>{data.get('key_partners', '-')}</p></div>
-                    <div class="box ka"><h4>⚙️ กิจกรรมหลัก (Key Activities)</h4><p>{data.get('key_activities', '-')}</p></div>
-                    <div class="box kr"><h4>🧱 ทรัพยากรหลัก (Key Resources)</h4><p>{data.get('key_resources', '-')}</p></div>
-                    <div class="box vp"><h4>🎁 คุณค่าหลัก (Value Propositions)</h4><p>{data.get('value_propositions', '-')}</p></div>
-                    <div class="box cr"><h4>❤️ ความสัมพันธ์ลูกค้า (Relationships)</h4><p>{data.get('customer_relationships', '-')}</p></div>
-                    <div class="box ch"><h4>🚚 ช่องทางเข้าถึง (Channels)</h4><p>{data.get('channels', '-')}</p></div>
-                    <div class="box cs"><h4>👥 กลุ่มลูกค้า (Customer Segments)</h4><p>{data.get('customer_segments', '-')}</p></div>
-                    <div class="box co"><h4>💰 โครงสร้างต้นทุน (Cost Structure)</h4><p>{data.get('cost_structure', '-')}</p></div>
-                    <div class="box rs"><h4>💵 กระแสรายได้ (Revenue Streams)</h4><p>{data.get('revenue_streams', '-')}</p></div>
+                    <div class="box kp"><h4>🤝 Key Partners</h4><p>{data.get('key_partners', '-')}</p></div>
+                    <div class="box ka"><h4>⚙️ Key Activities</h4><p>{data.get('key_activities', '-')}</p></div>
+                    <div class="box kr"><h4>🧱 Key Resources</h4><p>{data.get('key_resources', '-')}</p></div>
+                    <div class="box vp"><h4>🎁 Value Propositions</h4><p>{data.get('value_propositions', '-')}</p></div>
+                    <div class="box cr"><h4>❤️ Customer Relationships</h4><p>{data.get('customer_relationships', '-')}</p></div>
+                    <div class="box ch"><h4>🚚 Channels</h4><p>{data.get('channels', '-')}</p></div>
+                    <div class="box cs"><h4>👥 Customer Segments</h4><p>{data.get('customer_segments', '-')}</p></div>
+                    <div class="box co"><h4>💰 Cost Structure</h4><p>{data.get('cost_structure', '-')}</p></div>
+                    <div class="box rs"><h4>💵 Revenue Streams</h4><p>{data.get('revenue_streams', '-')}</p></div>
                 </div>
                 """
                 st.markdown(html_code, unsafe_allow_html=True)
@@ -281,6 +316,6 @@ if submitted:
 st.markdown("""
 <div class="footer-container">
     <p>© 2025 พัฒนาโดย: <span class="footer-credit">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</span> | กรมพัฒนาฝีมือแรงงาน</p>
-    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น ผู้ประกอบการควรพิจารณาความเหมาะสมกับสถานการณ์จริง</p>
+    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น</p>
 </div>
 """, unsafe_allow_html=True)
