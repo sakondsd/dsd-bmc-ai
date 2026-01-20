@@ -16,7 +16,7 @@ st.set_page_config(
     page_icon="🛠️"
 )
 
-# --- ฟังก์ชันและ Setup รูปภาพ ---
+# --- ฟังก์ชันแปลงรูปภาพ ---
 def get_img_as_base64(file_path):
     if not os.path.exists(file_path): return ""
     with open(file_path, "rb") as f: data = f.read()
@@ -67,7 +67,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap');
     html, body, [class*="css"] { font-family: 'Sarabun', sans-serif; }
 
-    /* --- Header & Responsive --- */
+    /* Header */
     .header-container {
         background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
         padding: 25px; border-radius: 12px; color: white; margin-bottom: 25px;
@@ -76,72 +76,61 @@ st.markdown("""
     .logo-img { width: 90px; height: 90px; object-fit: contain; background-color: white; border-radius: 50%; padding: 5px; border: 3px solid #FFC107; flex-shrink: 0; }
     .header-text { text-align: left; width: 100%; }
     .header-main { font-size: 1.8rem; font-weight: bold; margin: 0; color: #FFF; line-height: 1.2; }
-    .header-sub { font-size: 1.1rem; font-weight: 400; margin-bottom: 5px; color: #FFD54F; }
-    .header-line { border-bottom: 3px solid #FFC107; width: 80px; margin: 10px 0; }
-    .header-desc { font-size: 1rem; opacity: 0.9; }
-
+    .header-desc { font-size: 1rem; opacity: 0.9; color: #FFD54F; }
+    
     @media only screen and (max-width: 768px) {
-        .header-container { flex-direction: column; text-align: center; padding: 15px; gap: 10px; }
-        .header-text { text-align: center; } .header-line { margin: 10px auto; }
+        .header-container { flex-direction: column; text-align: center; padding: 15px; }
         .logo-img { width: 70px; height: 70px; }
         .header-main { font-size: 1.4rem; }
     }
 
-    /* --- Radio Button Style --- */
+    /* Radio Buttons */
     .stRadio [role=radiogroup] { gap: 10px; flex-wrap: wrap; justify-content: center; padding-bottom: 10px; }
     .stRadio label[data-baseweb="radio"] {
         background-color: #ffffff; border: 2px solid #9c27b0; color: #6a1b9a;
-        padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease-in-out;
-        display: flex; align-items: center; justify-content: center; min-width: 110px; margin: 0 !important;
+        padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center; min-width: 100px; margin: 0 !important;
     }
-    .stRadio label[data-baseweb="radio"] > div:first-child { display: none; }
-    .stRadio label[data-baseweb="radio"] > div:last-child { padding-left: 0 !important; }
-    .stRadio label[data-baseweb="radio"]:hover { background-color: #f3e5f5; border-color: #7b1fa2; transform: translateY(-2px); }
+    .stRadio label[data-baseweb="radio"]:hover { background-color: #f3e5f5; transform: translateY(-2px); }
     .stRadio label[data-baseweb="radio"][aria-checked="true"] {
         background-color: #4a148c !important; color: #ffffff !important; border-color: #4a148c !important;
-        box-shadow: 0 4px 10px rgba(74, 20, 140, 0.4); transform: translateY(-2px); font-weight: bold;
+        box-shadow: 0 4px 10px rgba(74, 20, 140, 0.4); font-weight: bold;
     }
+    .stRadio label[data-baseweb="radio"] > div:first-child { display: none; }
 
-    /* --- Common Box Style --- */
-    .box { background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: 100%; }
-    .box h4 { margin-top: 0; color: #4a148c; font-size: 1rem; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; }
-    .box p { font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; color: #555; margin: 0; }
+    /* Box & Grid */
+    .box { 
+        background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; 
+        color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: auto; min-height: 180px; overflow-wrap: break-word;
+    }
+    .box h4 { margin-top: 0; color: #4a148c; font-size: 1rem; font-weight: bold; margin-bottom: 8px; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; }
+    .box p { font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; color: #555; margin: 0; }
 
-    /* --- BMC Grid --- */
-    .bmc-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(3, minmax(180px, auto)); gap: 12px; margin-top: 20px; margin-bottom: 40px;}
-    @media only screen and (max-width: 768px) { .bmc-grid { display: flex; flex-direction: column; } }
+    .bmc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 10px; }
+    .vpc-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; margin-bottom: 30px; }
+    @media only screen and (max-width: 768px) { .bmc-grid, .vpc-container { display: flex; flex-direction: column; } }
+
+    /* VPC Colors */
+    .vpc-left { background-color: #e8eaf6; border: 2px dashed #3f51b5; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px;}
+    .vpc-right { background-color: #e0f2f1; border: 2px dashed #009688; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px;}
+    .vpc-header { font-weight: bold; text-align: center; font-size: 1.1rem; margin-bottom: 10px; }
     
-    .kp { grid-area: 1 / 1 / 3 / 2; background-color: #f3e5f5; } 
-    .ka { grid-area: 1 / 2 / 2 / 3; } 
-    .kr { grid-area: 2 / 2 / 3 / 3; }
-    .vp { grid-area: 1 / 3 / 3 / 4; background-color: #fffde7; border: 2px solid #FFC107; }
-    .cr { grid-area: 1 / 4 / 2 / 5; } 
-    .ch { grid-area: 2 / 4 / 3 / 5; } 
-    .cs { grid-area: 1 / 5 / 3 / 6; background-color: #f3e5f5; }
-    .co { grid-area: 3 / 1 / 4 / 3; background-color: #fff5f5; border: 1px dashed #dc3545; }
-    .rs { grid-area: 3 / 3 / 4 / 6; background-color: #f0fff4; border: 1px dashed #28a745; }
+    /* BMC Colors */
+    .vp { background-color: #fffde7; border: 2px solid #FFC107; }
+    .co { background-color: #fff5f5; border: 1px dashed #dc3545; }
+    .rs { background-color: #f0fff4; border: 1px dashed #28a745; }
 
-    /* --- VPC Grid (Value Proposition Canvas) --- */
-    .vpc-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-    .vpc-column { display: flex; flex-direction: column; gap: 10px; padding: 15px; border-radius: 10px; }
-    
-    /* ฝั่งสินค้า (ซ้าย) */
-    .vpc-left { background-color: #e8eaf6; border: 2px dashed #3f51b5; }
-    .vpc-header-left { color: #304ffe; font-weight: bold; text-align: center; font-size: 1.2rem; margin-bottom: 10px; }
-    
-    /* ฝั่งลูกค้า (ขวา) */
-    .vpc-right { background-color: #e0f2f1; border: 2px dashed #009688; }
-    .vpc-header-right { color: #00695c; font-weight: bold; text-align: center; font-size: 1.2rem; margin-bottom: 10px; }
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] { height: 50px; background-color: #f3e5f5; border-radius: 10px 10px 0 0; gap: 1px; }
+    .stTabs [aria-selected="true"] { background-color: #fff; color: #4a148c; border-top: 3px solid #4a148c; }
 
-    @media only screen and (max-width: 768px) { .vpc-container { grid-template-columns: 1fr; } }
-
-    /* Button Primary */
-    button[kind="primary"] { background-color: #4a148c !important; border: none !important; color: white !important; border-radius: 10px; padding: 0.6rem 1rem; font-size: 1rem; width: 100%; }
+    /* Button */
+    button[kind="primary"] { background-color: #4a148c !important; border: none; color: white !important; width: 100%; padding: 0.6rem; border-radius: 8px; }
     button[kind="primary"]:hover { background-color: #7b1fa2 !important; }
     
     /* Footer */
-    .footer-container { margin-top: 50px; padding-top: 20px; border-top: 2px solid #eee; text-align: center; color: #666; font-size: 0.85rem; }
-    .footer-credit { font-weight: bold; color: #4a148c; }
+    .footer-container { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 0.8rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -150,158 +139,132 @@ st.markdown(f"""
 <div class="header-container">
     <img src="{logo_src}" class="logo-img" alt="DSD Logo">
     <div class="header-text">
-        <div class="header-sub">กรมพัฒนาฝีมือแรงงาน</div>
+        <div style="font-size: 1.1rem; color: #FFD54F;">กรมพัฒนาฝีมือแรงงาน</div>
         <div class="header-main">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</div>
-        <div class="header-line"></div>
+        <div style="border-bottom: 3px solid #FFC107; width: 60px; margin: 10px 0;"></div>
         <div class="header-desc">ระบบสร้างโมเดลธุรกิจ (BMC) & แผนคุณค่า (VPC) อัตโนมัติ</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# --- ฟังก์ชัน AI ---
+# --- AI Function ---
 def generate_bmc_vpc(business, product, customer, strength):
-    if not api_key: st.error("ไม่พบ API Key กรุณาตั้งค่าในไฟล์ .env"); return None
+    if not api_key: st.error("ไม่พบ API Key"); return None
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    
+    # ✅ กลับมาใช้ 1.5-flash ที่โควต้าเยอะสุด และใช้ได้แน่นอนเพราะอัปเดต Lib แล้ว
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
-    บทบาท: คุณคือที่ปรึกษาธุรกิจและผู้เชี่ยวชาญด้าน Design Thinking
-    โจทย์: วิเคราะห์ธุรกิจ "{business}" สินค้า "{product}" ลูกค้า "{customer}" จุดเด่น "{strength}"
+    Act as a Business Consultant. Analyze: "{business}" (Product: "{product}", Target: "{customer}", USP: "{strength}").
     
-    คำสั่ง 1: สร้าง Business Model Canvas (BMC) 9 ช่อง
-    คำสั่ง 2: สร้าง Value Proposition Canvas (VPC) 6 ช่อง
+    Create a valid JSON object with these keys only:
+    - customer_jobs, pains, gains
+    - products_services, pain_relievers, gain_creators
+    - key_partners, key_activities, key_resources, value_propositions, customer_relationships, channels, customer_segments, cost_structure, revenue_streams
     
-    Format: ตอบเป็น JSON Object เท่านั้น keys ตามนี้:
-    [BMC]: key_partners, key_activities, key_resources, value_propositions, customer_relationships, channels, customer_segments, cost_structure, revenue_streams
-    [VPC - ฝั่งลูกค้า]: customer_jobs (งานที่ลูกค้าต้องทำ), pains (ความยุ่งยาก/ปัญหา), gains (ประโยชน์ที่ลูกค้าคาดหวัง)
-    [VPC - ฝั่งสินค้า]: products_services (สินค้าและบริการของเรา), pain_relievers (สิ่งที่ช่วยแก้ปัญหา), gain_creators (สิ่งที่ช่วยสร้างประโยชน์)
-    
-    Requirement: 
-    - ใช้ Bullet point (-) ข้อความสั้นกระชับ ภาษาไทย
-    - Cost/Revenue ให้ระบุตัวเลขราคาบาท (ไม่ต้องแยก Fixed/Variable)
+    Requirements:
+    - Use Thai Language (ภาษาไทย).
+    - Use short bullet points.
+    - Include estimated THB prices in cost/revenue.
+    - Return ONLY the JSON object.
     """
     
     try:
-        response = model.generate_content(prompt, generation_config=genai.types.GenerationConfig(response_mime_type="application/json"))
-        data = json.loads(response.text.strip())
+        # ใช้ JSON Mode
+        response = model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
+        text_response = response.text.strip()
+        data = json.loads(text_response)
         
-        # Data Cleaning
-        cleaned_data = {}
-        for key, value in data.items():
-            if isinstance(value, dict): value = "\n".join(["\n".join(v) if isinstance(v, list) else str(v) for v in value.values()])
-            elif isinstance(value, list): value = "\n".join(map(str, value))
-            else: value = str(value)
-            cleaned_data[key] = value.replace("['", "").replace("']", "").replace('["', '').replace('"]', '')
-        return cleaned_data
-    except Exception as e: st.error(f"เกิดข้อผิดพลาด: {e}"); return {}
+        # Clean Data
+        cleaned = {}
+        for k, v in data.items():
+            if isinstance(v, list): v = "\n".join([f"- {str(i)}" for i in v])
+            elif isinstance(v, dict): v = "\n".join([f"- {item}" for item in v.values()])
+            else: v = str(v)
+            cleaned[k] = v.replace("['", "").replace("']", "").replace('["', '').replace('"]', '')
+        return cleaned
 
-# --- Session State ---
+    except Exception as e:
+        st.error(f"เกิดข้อผิดพลาด: {e}")
+        return {}
+
+# --- Logic & UI ---
 if 'form_data' not in st.session_state:
     st.session_state['form_data'] = {'name': '', 'product': '', 'customer': '', 'usp': ''}
 
-def update_form_from_radio():
-    selected = st.session_state['radio_selection']
-    if selected in EXAMPLES_DATA: st.session_state['form_data'] = EXAMPLES_DATA[selected].copy()
-    else: st.session_state['form_data'] = {'name': '', 'product': '', 'customer': '', 'usp': ''}
+def update_form():
+    sel = st.session_state['radio_select']
+    st.session_state['form_data'] = EXAMPLES_DATA.get(sel, {'name': '', 'product': '', 'customer': '', 'usp': ''}).copy()
 
-# --- UI เลือกตัวอย่าง ---
-st.write("##### 💡 เลือกตัวอย่างธุรกิจ (สำหรับทดสอบ):")
-current_index = 0
-current_name = st.session_state['form_data']['name']
-if current_name:
-    for i, key in enumerate(EXAMPLES_DATA.keys()):
-        if EXAMPLES_DATA[key]['name'] == current_name: current_index = i + 1; break
+st.write("##### 💡 เลือกตัวอย่างธุรกิจ:")
+current_idx = 0
+if st.session_state['form_data']['name']:
+    for i, k in enumerate(EXAMPLES_DATA):
+        if EXAMPLES_DATA[k]['name'] == st.session_state['form_data']['name']: current_idx = i + 1; break
 
-st.radio("ตัวเลือก", options=EXAMPLE_OPTIONS, index=current_index, label_visibility="collapsed", horizontal=True, key="radio_selection", on_change=update_form_from_radio)
-
+st.radio("ตัวเลือก", options=EXAMPLE_OPTIONS, index=current_idx, horizontal=True, label_visibility="collapsed", key="radio_select", on_change=update_form)
 st.divider()
 
-# --- Form รับข้อมูล ---
-with st.form("input_form"):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("**1. ชื่อธุรกิจ / ประเภท**")
-        business_name = st.text_input("ชื่อธุรกิจ", value=st.session_state['form_data']['name'], label_visibility="collapsed")
-        st.markdown("**3. ลูกค้าของคุณคือใคร**")
-        customer_target = st.text_input("ลูกค้า", value=st.session_state['form_data']['customer'], label_visibility="collapsed")
-    with col2:
-        st.markdown("**2. สินค้าหรือบริการคืออะไร**")
-        product_detail = st.text_area("สินค้า", value=st.session_state['form_data']['product'], label_visibility="collapsed", height=104)
-        st.markdown("**4. จุดเด่น / สิ่งที่ลูกค้าชอบ**")
-        usp = st.text_input("จุดเด่น", value=st.session_state['form_data']['usp'], label_visibility="collapsed")
+with st.form("main_form"):
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("**1. ชื่อธุรกิจ**"); b_name = st.text_input("ชื่อ", st.session_state['form_data']['name'], label_visibility="collapsed")
+        st.markdown("**3. ลูกค้า**"); b_cust = st.text_input("ลูกค้า", st.session_state['form_data']['customer'], label_visibility="collapsed")
+    with c2:
+        st.markdown("**2. สินค้า/บริการ**"); b_prod = st.text_area("สินค้า", st.session_state['form_data']['product'], label_visibility="collapsed", height=104)
+        st.markdown("**4. จุดเด่น**"); b_usp = st.text_input("จุดเด่น", st.session_state['form_data']['usp'], label_visibility="collapsed")
     
-    submitted = st.form_submit_button("🚀 สร้างแผนธุรกิจ (BMC & VPC)", type="primary")
+    submitted = st.form_submit_button("🚀 สร้างแผนธุรกิจ (VPC & BMC)", type="primary")
 
-# --- ผลลัพธ์ ---
 if submitted:
-    if not business_name:
-        st.warning("⚠️ กรุณากรอกชื่อธุรกิจก่อนครับ")
+    if not b_name: st.warning("กรุณากรอกชื่อธุรกิจ")
     else:
-        with st.spinner("⏳ AI กำลังวิเคราะห์โมเดลธุรกิจและแผนคุณค่า..."):
-            data = generate_bmc_vpc(business_name, product_detail, customer_target, usp)
-            
-            if data:
-                st.markdown("### 1. Business Model Canvas (โมเดลธุรกิจ)")
-                bmc_html = f"""
-                <div class="bmc-grid">
-                    <div class="box kp"><h4>🤝 Key Partners<br>(พันธมิตรหลัก)</h4><p>{data.get('key_partners', '-')}</p></div>
-                    <div class="box ka"><h4>⚙️ Key Activities<br>(กิจกรรมหลัก)</h4><p>{data.get('key_activities', '-')}</p></div>
-                    <div class="box kr"><h4>🧱 Key Resources<br>(ทรัพยากรหลัก)</h4><p>{data.get('key_resources', '-')}</p></div>
-                    <div class="box vp"><h4>🎁 Value Propositions<br>(คุณค่าที่ส่งมอบ)</h4><p>{data.get('value_propositions', '-')}</p></div>
-                    <div class="box cr"><h4>❤️ Customer Relationships<br>(ความสัมพันธ์ลูกค้า)</h4><p>{data.get('customer_relationships', '-')}</p></div>
-                    <div class="box ch"><h4>🚚 Channels<br>(ช่องทางเข้าถึง)</h4><p>{data.get('channels', '-')}</p></div>
-                    <div class="box cs"><h4>👥 Customer Segments<br>(กลุ่มลูกค้าเป้าหมาย)</h4><p>{data.get('customer_segments', '-')}</p></div>
-                    <div class="box co"><h4>💰 Cost Structure<br>(โครงสร้างต้นทุน)</h4><p>{data.get('cost_structure', '-')}</p></div>
-                    <div class="box rs"><h4>💵 Revenue Streams<br>(กระแสรายได้)</h4><p>{data.get('revenue_streams', '-')}</p></div>
-                </div>
-                """
-                st.markdown(bmc_html, unsafe_allow_html=True)
-
-                st.markdown("---")
-                st.markdown("### 2. Value Proposition Canvas (แผนคุณค่า)")
-                st.info("💡 แผนคุณค่าช่วยวิเคราะห์ว่าสินค้าของเรา (ซ้าย) ตอบโจทย์ลูกค้า (ขวา) ได้ตรงจุดหรือไม่")
+        with st.spinner("⏳ AI กำลังวิเคราะห์..."):
+            d = generate_bmc_vpc(b_name, b_prod, b_cust, b_usp)
+            if d:
+                tab1, tab2 = st.tabs(["📋 1. แผนคุณค่า (VPC)", "📊 2. โมเดลธุรกิจ (BMC)"])
                 
-                vpc_html = f"""
-                <div class="vpc-container">
-                    <div class="vpc-column vpc-left">
-                        <div class="vpc-header-left">📦 ฝั่งสินค้า (Value Map)</div>
-                        <div class="box" style="background:white;">
-                            <h4>🛍️ Products & Services<br>(สินค้าและบริการ)</h4>
-                            <p>{data.get('products_services', '-')}</p>
+                with tab1:
+                    st.success("💡 **Value Proposition Canvas**: ช่วยวิเคราะห์ว่าสินค้าตอบโจทย์ลูกค้าจริงไหม")
+                    vpc_html = f"""
+                    <div class="vpc-container">
+                        <div class="vpc-left">
+                            <div class="vpc-header" style="color:#3f51b5;">📦 ฝั่งสินค้า (Value Map)</div>
+                            <div class="box"><h4>🛍️ Products & Services<br>(สินค้าและบริการ)</h4><p>{d.get('products_services', '-')}</p></div>
+                            <div class="box"><h4>💊 Pain Relievers<br>(สิ่งที่ช่วยแก้ปัญหา)</h4><p>{d.get('pain_relievers', '-')}</p></div>
+                            <div class="box"><h4>⚡ Gain Creators<br>(สิ่งที่ช่วยสร้างประโยชน์)</h4><p>{d.get('gain_creators', '-')}</p></div>
                         </div>
-                        <div class="box" style="background:white;">
-                            <h4>💊 Pain Relievers<br>(สิ่งที่ช่วยแก้ปัญหา)</h4>
-                            <p>{data.get('pain_relievers', '-')}</p>
-                        </div>
-                        <div class="box" style="background:white;">
-                            <h4>⚡ Gain Creators<br>(สิ่งที่ช่วยสร้างประโยชน์)</h4>
-                            <p>{data.get('gain_creators', '-')}</p>
-                        </div>
-                    </div>
-
-                    <div class="vpc-column vpc-right">
-                        <div class="vpc-header-right">👤 ฝั่งลูกค้า (Customer Profile)</div>
-                         <div class="box" style="background:white;">
-                            <h4>📝 Customer Jobs<br>(งานที่ลูกค้าต้องทำ)</h4>
-                            <p>{data.get('customer_jobs', '-')}</p>
-                        </div>
-                        <div class="box" style="background:white;">
-                            <h4>😫 Pains<br>(ความยุ่งยาก/ปัญหา)</h4>
-                            <p>{data.get('pains', '-')}</p>
-                        </div>
-                        <div class="box" style="background:white;">
-                            <h4>😍 Gains<br>(ประโยชน์ที่คาดหวัง)</h4>
-                            <p>{data.get('gains', '-')}</p>
+                        <div class="vpc-right">
+                            <div class="vpc-header" style="color:#00695c;">👤 ฝั่งลูกค้า (Customer Profile)</div>
+                            <div class="box"><h4>📝 Customer Jobs<br>(งานที่ลูกค้าต้องทำ)</h4><p>{d.get('customer_jobs', '-')}</p></div>
+                            <div class="box"><h4>😫 Pains<br>(ความยุ่งยาก/ปัญหา)</h4><p>{d.get('pains', '-')}</p></div>
+                            <div class="box"><h4>😍 Gains<br>(ประโยชน์ที่คาดหวัง)</h4><p>{d.get('gains', '-')}</p></div>
                         </div>
                     </div>
-                </div>
-                """
-                st.markdown(vpc_html, unsafe_allow_html=True)
+                    """
+                    st.markdown(vpc_html, unsafe_allow_html=True)
+                
+                with tab2:
+                    st.info("💡 **Business Model Canvas**: ภาพรวมธุรกิจทั้ง 9 ด้าน")
+                    bmc_html = f"""
+                    <div class="bmc-grid">
+                        <div class="box kp"><h4>🤝 Key Partners<br>(พันธมิตร)</h4><p>{d.get('key_partners', '-')}</p></div>
+                        <div class="box ka"><h4>⚙️ Key Activities<br>(กิจกรรมหลัก)</h4><p>{d.get('key_activities', '-')}</p></div>
+                        <div class="box kr"><h4>🧱 Key Resources<br>(ทรัพยากร)</h4><p>{d.get('key_resources', '-')}</p></div>
+                        <div class="box vp"><h4>🎁 Value Propositions<br>(คุณค่าที่ส่งมอบ)</h4><p>{d.get('value_propositions', '-')}</p></div>
+                        <div class="box cr"><h4>❤️ Customer Relationships<br>(สายสัมพันธ์)</h4><p>{d.get('customer_relationships', '-')}</p></div>
+                        <div class="box ch"><h4>🚚 Channels<br>(ช่องทาง)</h4><p>{d.get('channels', '-')}</p></div>
+                        <div class="box cs"><h4>👥 Customer Segments<br>(ลูกค้า)</h4><p>{d.get('customer_segments', '-')}</p></div>
+                        <div class="box co"><h4>💰 Cost Structure<br>(ต้นทุน)</h4><p>{d.get('cost_structure', '-')}</p></div>
+                        <div class="box rs"><h4>💵 Revenue Streams<br>(รายได้)</h4><p>{d.get('revenue_streams', '-')}</p></div>
+                    </div>
+                    """
+                    st.markdown(bmc_html, unsafe_allow_html=True)
 
-# --- Footer ---
+# Footer
 st.markdown("""
 <div class="footer-container">
-    <p>© 2025 พัฒนาโดย: <span class="footer-credit">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</span> | กรมพัฒนาฝีมือแรงงาน</p>
-    <p style="font-size: 0.75rem;">เครื่องมือนี้ใช้ AI วิเคราะห์เบื้องต้น ผู้ประกอบการควรพิจารณาความเหมาะสมกับสถานการณ์จริง</p>
+    <p>© 2025 พัฒนาโดย: <span style="color:#4a148c; font-weight:bold;">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</span> | กรมพัฒนาฝีมือแรงงาน</p>
 </div>
 """, unsafe_allow_html=True)
