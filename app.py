@@ -162,7 +162,7 @@ st.markdown(f"""
 def generate_bmc_vpc(business, product, customer, strength):
     if not api_key: st.error("ไม่พบ API Key กรุณาตั้งค่าในไฟล์ .env"); return None
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
     
     prompt = f"""
     บทบาท: คุณคือที่ปรึกษาธุรกิจและผู้เชี่ยวชาญด้าน Design Thinking
