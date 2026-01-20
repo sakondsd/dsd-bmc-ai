@@ -385,8 +385,8 @@ if submit_bmc or submit_vpc:
 # --- Footer ---
 st.markdown("""
 <div class="footer-container">
-    <div class="footer-credit">สำนักงานพัฒนาฝีมือแรงงานสกลนคร</div>
+    <div class="footer-credit"> |-- เทอดศิลป์ โสมูล --|</div>
     <div class="footer-line"></div>
-    <p>© 2025 กรมพัฒนาฝีมือแรงงาน | AI Powered by Gemini</p>
+    <p>© 2025 สำนักงานพัฒนาฝีมือแรงงานสกลนคร | AI Powered by Gemini</p>
 </div>
 """, unsafe_allow_html=True)
