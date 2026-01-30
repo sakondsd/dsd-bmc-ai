@@ -383,10 +383,111 @@ if submit_bmc or submit_vpc:
                 )
 
 # --- Footer ---
-st.markdown("""
-<div class="footer-container">
-    <div class="footer-credit"> |-- เทอดศิลป์ โสมูล --|</div>
-    <div class="footer-line"></div>
-    <p>© 2025 สำนักงานพัฒนาฝีมือแรงงานสกลนคร | AI Powered by Gemini</p>
+# --- ส่วน Footer (แบบใหม่ตามดีไซน์) ---
+
+# 1. กำหนดชื่อไฟล์รูปโปรไฟล์ (ต้องเอาไฟล์ไปวางใน folder static/)
+footer_img_path = "static/profile.jpg"  # <-- เปลี่ยนชื่อไฟล์ตรงนี้ให้ตรงกับรูปของคุณ
+
+# แปลงรูปเป็น Base64
+footer_img_base64 = get_img_as_base64(footer_img_path)
+
+# กรณีหาไฟล์รูปไม่เจอ ให้ใช้รูป Logo เดิมแทนชั่วคราว
+if not footer_img_base64:
+    footer_src = logo_src 
+else:
+    footer_src = f"data:image/png;base64,{footer_img_base64}"
+
+# --- ส่วน Footer (แบบใหม่ตามดีไซน์) ---
+
+# 1. กำหนดชื่อไฟล์รูปโปรไฟล์ (ต้องเอาไฟล์ไปวางใน folder static/)
+footer_img_path = "static/profile.jpg"  # <-- เปลี่ยนชื่อไฟล์ตรงนี้ให้ตรงกับรูปของคุณ
+
+# แปลงรูปเป็น Base64
+footer_img_base64 = get_img_as_base64(footer_img_path)
+
+# กรณีหาไฟล์รูปไม่เจอ ให้ใช้รูป Logo เดิมแทนชั่วคราว
+if not footer_img_base64:
+    footer_src = logo_src 
+else:
+    footer_src = f"data:image/png;base64,{footer_img_base64}"
+
+# --- ส่วน Footer (ฉบับแก้ไข: ป้องกัน HTML กลายเป็น Text) ---
+
+# 1. เตรียมรูป (เหมือนเดิม)
+footer_img_path = "static/profile.jpg"
+footer_img_base64 = get_img_as_base64(footer_img_path)
+if not footer_img_base64:
+    footer_src = logo_src 
+else:
+    footer_src = f"data:image/png;base64,{footer_img_base64}"
+
+# 2. สร้าง CSS (แยกออกมาเพื่อไม่ให้ตีกับ HTML)
+footer_css = """
+<style>
+    .footer-custom {
+        background: linear-gradient(90deg, #1a0b2e 0%, #3a1c71 100%);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 50px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        border-top: 5px solid #FFD700;
+    }
+    .footer-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #FFD700;
+        flex-shrink: 0;
+    }
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .footer-title {
+        color: #FFD700;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .footer-text {
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+        opacity: 0.9;
+        line-height: 1.4;
+    }
+    .footer-link {
+        color: #FFD700 !important;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .footer-copy {
+        font-size: 0.75rem;
+        color: #aaa;
+        margin-top: 8px;
+    }
+    @media (max-width: 600px) {
+        .footer-custom { flex-direction: column; text-align: center; }
+    }
+</style>
+"""
+
+# 3. สร้าง HTML (เขียนชิดซ้ายสุด ห้ามเว้นวรรคข้างหน้า)
+footer_html = f"""
+<div class="footer-custom">
+<img src="{footer_src}" class="footer-img">
+<div class="footer-content">
+<div class="footer-title">ทีมงานผู้พัฒนา</div>
+<div class="footer-text">พบปัญหาการใช้งาน ติดต่อ นายเทอดศิลป์ โสมูล (อาร์ท)</div>
+<div class="footer-text">e-mail : <a href="mailto:toedsin.so@dsd.go.th" class="footer-link">toedsin.so@dsd.go.th</a></div>
+<div class="footer-copy">© 2026 DSD Course Architect by SAKON-DSD</div>
 </div>
-""", unsafe_allow_html=True)
+</div>
+"""
+
+# 4. แสดงผลรวมกัน
+st.markdown(footer_css + footer_html, unsafe_allow_html=True)
